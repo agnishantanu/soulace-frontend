@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
 import './Chatbot.css'
 
 const Chatbot = () => {
@@ -37,7 +39,7 @@ const Chatbot = () => {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get('/api/chat/conversations')
+      const response = await axios.get(`${API_BASE}/api/chat/conversations`)
       setConversations(response.data)
       // If there are conversations and none is selected, select the first one
       if (response.data.length > 0 && !currentConversationId) {
@@ -50,7 +52,7 @@ const Chatbot = () => {
 
   const fetchChatHistory = async (conversationId) => {
     try {
-      const response = await axios.get(`/api/chat?conversationId=${conversationId}`)
+      const response = await axios.get(`${API_BASE}/api/chat?conversationId=${conversationId}`)
       const formattedMessages = response.data.flatMap(msg => [
         { text: msg.message, isUser: true, timestamp: msg.timestamp },
         { text: msg.response, isUser: false, timestamp: msg.timestamp }
@@ -63,7 +65,7 @@ const Chatbot = () => {
 
   const handleNewChat = async () => {
     try {
-      const response = await axios.post('/api/chat/conversations', { title: 'New Chat' })
+      const response = await axios.post(`${API_BASE}/api/chat/conversations`, { title: 'New Chat' })
       setConversations(prev => [response.data, ...prev])
       setCurrentConversationId(response.data._id)
       setMessages([])
@@ -78,7 +80,7 @@ const Chatbot = () => {
       return
     }
     try {
-      await axios.delete(`/api/chat/conversations/${conversationId}`)
+      await axios.delete(`${API_BASE}/api/chat/conversations/${conversationId}`)
       setConversations(prev => prev.filter(conv => conv._id !== conversationId))
       if (currentConversationId === conversationId) {
         if (conversations.length > 1) {
@@ -105,7 +107,7 @@ const Chatbot = () => {
     let conversationId = currentConversationId
     if (!conversationId) {
       try {
-        const newConvResponse = await axios.post('/api/chat/conversations', { title: userMessage.substring(0, 50) })
+        const newConvResponse = await axios.post(`${API_BASE}/api/chat/conversations`, { title: userMessage.substring(0, 50) })
         conversationId = newConvResponse.data._id
         setCurrentConversationId(conversationId)
         setConversations(prev => [newConvResponse.data, ...prev])
@@ -119,7 +121,7 @@ const Chatbot = () => {
     setLoading(true)
 
     try {
-      const response = await axios.post('/api/chat', { 
+      const response = await axios.post(`${API_BASE}/api/chat`, { 
         message: userMessage,
         conversationId 
       })
