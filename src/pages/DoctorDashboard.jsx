@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './DoctorDashboard.css'
 
 const DoctorDashboard = () => {
@@ -17,7 +16,7 @@ const DoctorDashboard = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/appointments/doctor`)
+      const response = await axios.get(`${API_BASE_URL}/api/appointments/doctor`)
       setAppointments(response.data)
     } catch (error) {
       console.error('Error fetching appointments:', error)
@@ -28,7 +27,7 @@ const DoctorDashboard = () => {
 
   const handleAppointmentAction = async (appointmentId, action) => {
     try {
-      await axios.patch(`${API_BASE}/api/appointments/${appointmentId}`, {
+      await axios.patch(`${API_BASE_URL}/api/appointments/${appointmentId}`, {
         status: action === 'accept' ? 'confirmed' : 'rejected'
       })
       fetchAppointments() // Refresh list

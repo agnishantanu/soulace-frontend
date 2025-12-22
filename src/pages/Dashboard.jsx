@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './Dashboard.css'
 
 const Dashboard = () => {
@@ -21,8 +20,8 @@ const Dashboard = () => {
   const fetchStats = async () => {
     try {
       const [appointmentsRes, chatRes] = await Promise.all([
-        axios.get(`${API_BASE}/api/appointments`),
-        axios.get(`${API_BASE}/api/chat`)
+        axios.get(`${API_BASE_URL}/api/appointments`),
+        axios.get(`${API_BASE_URL}/api/chat`)
       ])
       
       setStats({

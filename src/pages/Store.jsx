@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './Store.css'
 
 const Store = () => {
@@ -19,7 +18,7 @@ const Store = () => {
       if (filter.type) params.type = filter.type
       if (filter.category) params.category = filter.category
 
-      const response = await axios.get(`${API_BASE}/api/products`, { params })
+      const response = await axios.get(`${API_BASE_URL}/api/products`, { params })
       setProducts(response.data)
     } catch (error) {
       console.error('Error fetching products:', error)

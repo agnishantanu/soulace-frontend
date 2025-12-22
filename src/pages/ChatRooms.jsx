@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './ChatRooms.css'
 
 const ChatRooms = () => {
@@ -15,7 +14,7 @@ const ChatRooms = () => {
 
   useEffect(() => {
     fetchRooms()
-    const newSocket = io(API_BASE)
+    const newSocket = io(API_BASE_URL)
     setSocket(newSocket)
 
     newSocket.on('receive-message', (data) => {
@@ -42,7 +41,7 @@ const ChatRooms = () => {
 
   const fetchRooms = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/chatrooms`)
+      const response = await axios.get(`${API_BASE_URL}/api/chatrooms`)
       setRooms(response.data)
       if (response.data.length > 0 && !selectedRoom) {
         setSelectedRoom(response.data[0])
@@ -54,7 +53,7 @@ const ChatRooms = () => {
 
   const fetchRoomMessages = async (roomId) => {
     try {
-      const response = await axios.get(`${API_BASE}/api/chatrooms/${roomId}`)
+      const response = await axios.get(`${API_BASE_URL}/api/chatrooms/${roomId}`)
       setMessages(response.data.messages || [])
     } catch (error) {
       console.error('Error fetching messages:', error)
@@ -69,7 +68,7 @@ const ChatRooms = () => {
     setNewMessage('')
 
     try {
-      const response = await axios.post(`${API_BASE}/api/chatrooms/${selectedRoom._id}/messages`, {
+      const response = await axios.post(`${API_BASE_URL}/api/chatrooms/${selectedRoom._id}/messages`, {
         message: messageText,
         anonymousId
       })

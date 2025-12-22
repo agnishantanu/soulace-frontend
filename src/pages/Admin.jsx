@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './Admin.css'
 
 const Admin = () => {
@@ -33,7 +32,7 @@ const Admin = () => {
     setMessage({ type: '', text: '' })
 
     try {
-      const response = await axios.post(`${API_BASE}/api/admin/doctors`, formData)
+      const response = await axios.post(`${API_BASE_URL}/api/admin/doctors`, formData)
       setMessage({ 
         type: 'success', 
         text: `Doctor account created successfully! Email: ${response.data.user.email}` 

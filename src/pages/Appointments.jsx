@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './Appointments.css'
 
 const Appointments = () => {
@@ -22,7 +21,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/appointments`)
+      const response = await axios.get(`${API_BASE_URL}/api/appointments`)
       setAppointments(response.data)
     } catch (error) {
       console.error('Error fetching appointments:', error)

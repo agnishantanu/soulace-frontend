@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+import { API_BASE_URL } from '../config/api'
 import './Doctors.css'
 
 const Doctors = () => {
@@ -34,7 +33,7 @@ const Doctors = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/doctors`)
+      const response = await axios.get(`${API_BASE_URL}/api/doctors`)
       setDoctors(response.data)
     } catch (error) {
       console.error('Error fetching doctors:', error)
@@ -61,7 +60,7 @@ const Doctors = () => {
       const datetime = new Date(`${appointmentForm.appointmentDate}T${appointmentForm.appointmentTime}`)
       
       // Send the doctor's unique id
-      await axios.post(`${API_BASE}/api/appointments`, {
+      await axios.post(`${API_BASE_URL}/api/appointments`, {
         doctorId: selectedDoctor._id,
         datetime: datetime.toISOString(),
         notes: appointmentForm.notes || ''
