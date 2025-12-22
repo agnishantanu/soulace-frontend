@@ -60,11 +60,9 @@ const Doctors = () => {
       // Combine date and time into datetime
       const datetime = new Date(`${appointmentForm.appointmentDate}T${appointmentForm.appointmentTime}`)
       
-      // Use userId if available, otherwise use doctor _id (for backward compatibility)
-      const doctorUserId = selectedDoctor.userId || selectedDoctor._id
-
+      // Send the doctor's unique id
       await axios.post(`${API_BASE}/api/appointments`, {
-        doctorId: doctorUserId,
+        doctorId: selectedDoctor._id,
         datetime: datetime.toISOString(),
         notes: appointmentForm.notes || ''
       })
