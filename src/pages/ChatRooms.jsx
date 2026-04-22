@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { io } from 'socket.io-client'
 import axios from 'axios'
 import { API_BASE_URL } from '../config/api'
@@ -11,6 +11,13 @@ const ChatRooms = () => {
   const [newMessage, setNewMessage] = useState('')
   const [anonymousId, setAnonymousId] = useState('')
   const [socket, setSocket] = useState(null)
+  const anonymousIdRef = useRef('')
+
+  useEffect(() => {
+    const id = 'anon_' + Math.random().toString(36).substr(2, 9)
+    setAnonymousId(id)
+    anonymousIdRef.current = id
+  }, [])
 
   useEffect(() => {
     fetchRooms()
@@ -18,7 +25,10 @@ const ChatRooms = () => {
     setSocket(newSocket)
 
     newSocket.on('receive-message', (data) => {
-      setMessages(prev => [...prev, data])
+      // Only add messages from other users (we already added our own from REST response)
+      if (data.anonymousId !== anonymousIdRef.current) {
+        setMessages(prev => [...prev, data])
+      }
     })
 
     return () => {
@@ -32,12 +42,6 @@ const ChatRooms = () => {
       fetchRoomMessages(selectedRoom._id)
     }
   }, [selectedRoom, socket])
-
-  useEffect(() => {
-    if (!anonymousId) {
-      setAnonymousId('anon_' + Math.random().toString(36).substr(2, 9))
-    }
-  }, [])
 
   const fetchRooms = async () => {
     try {

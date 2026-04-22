@@ -14,6 +14,11 @@ const Chatbot = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const messagesEndRef = useRef(null)
 
+  // Explicit auth header to avoid race condition with axios global defaults
+  const authConfig = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  })
+
   useEffect(() => {
     if (isAuthenticated) {
       fetchConversations()
@@ -38,7 +43,7 @@ const Chatbot = () => {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/chat/conversations`)
+      const response = await axios.get(`${API_BASE_URL}/api/chat/conversations`, authConfig())
       setConversations(response.data)
       // If there are conversations and none is selected, select the first one
       if (response.data.length > 0 && !currentConversationId) {
@@ -51,7 +56,7 @@ const Chatbot = () => {
 
   const fetchChatHistory = async (conversationId) => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/chat?conversationId=${conversationId}`)
+      const response = await axios.get(`${API_BASE_URL}/api/chat?conversationId=${conversationId}`, authConfig())
       const formattedMessages = response.data.flatMap(msg => [
         { text: msg.message, isUser: true, timestamp: msg.timestamp },
         { text: msg.response, isUser: false, timestamp: msg.timestamp }
@@ -64,7 +69,7 @@ const Chatbot = () => {
 
   const handleNewChat = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/chat/conversations`, { title: 'New Chat' })
+      const response = await axios.post(`${API_BASE_URL}/api/chat/conversations`, { title: 'New Chat' }, authConfig())
       setConversations(prev => [response.data, ...prev])
       setCurrentConversationId(response.data._id)
       setMessages([])
@@ -79,7 +84,7 @@ const Chatbot = () => {
       return
     }
     try {
-      await axios.delete(`${API_BASE_URL}/api/chat/conversations/${conversationId}`)
+      await axios.delete(`${API_BASE_URL}/api/chat/conversations/${conversationId}`, authConfig())
       setConversations(prev => prev.filter(conv => conv._id !== conversationId))
       if (currentConversationId === conversationId) {
         if (conversations.length > 1) {
@@ -106,7 +111,7 @@ const Chatbot = () => {
     let conversationId = currentConversationId
     if (!conversationId) {
       try {
-        const newConvResponse = await axios.post(`${API_BASE_URL}/api/chat/conversations`, { title: userMessage.substring(0, 50) })
+        const newConvResponse = await axios.post(`${API_BASE_URL}/api/chat/conversations`, { title: userMessage.substring(0, 50) }, authConfig())
         conversationId = newConvResponse.data._id
         setCurrentConversationId(conversationId)
         setConversations(prev => [newConvResponse.data, ...prev])
@@ -123,7 +128,7 @@ const Chatbot = () => {
       const response = await axios.post(`${API_BASE_URL}/api/chat`, { 
         message: userMessage,
         conversationId 
-      })
+      }, authConfig())
       setMessages(prev => [...prev, { 
         text: response.data.response, 
         isUser: false, 

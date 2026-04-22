@@ -10,7 +10,8 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     phone: '',
-    dateOfBirth: ''
+    dateOfBirth: '',
+    role: 'patient'
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -42,7 +43,12 @@ const Register = () => {
     const result = await register(userData)
     
     if (result.success) {
-      navigate('/dashboard')
+      // Route based on selected role
+      if (formData.role === 'doctor') {
+        navigate('/doctor/dashboard')
+      } else {
+        navigate('/dashboard')
+      }
     } else {
       setError(result.message)
     }
@@ -58,6 +64,23 @@ const Register = () => {
           <p className="auth-subtitle">Join Soulace and start your journey to better mental health</p>
 
           {error && <div className="error-message">{error}</div>}
+
+          <div className="role-selector">
+            <button
+              type="button"
+              className={`role-btn ${formData.role === 'patient' ? 'active' : ''}`}
+              onClick={() => setFormData({ ...formData, role: 'patient' })}
+            >
+              🧑 Patient
+            </button>
+            <button
+              type="button"
+              className={`role-btn ${formData.role === 'doctor' ? 'active' : ''}`}
+              onClick={() => setFormData({ ...formData, role: 'doctor' })}
+            >
+              🩺 Doctor
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div className="input-group">
@@ -94,7 +117,7 @@ const Register = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+1 234 567 8900"
+                placeholder="+91 98765 43210"
               />
             </div>
 
@@ -137,7 +160,7 @@ const Register = () => {
             </div>
 
             <button type="submit" className="btn btn-primary btn-large" disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? 'Creating account...' : `Create ${formData.role === 'doctor' ? 'Doctor' : 'Patient'} Account`}
             </button>
           </form>
 
@@ -151,4 +174,5 @@ const Register = () => {
 }
 
 export default Register
+
 

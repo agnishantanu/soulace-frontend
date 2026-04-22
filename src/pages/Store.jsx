@@ -112,7 +112,7 @@ const Store = () => {
                   <span className="category-value">{product.category}</span>
                 </div>
                 <div className="product-footer">
-                  <div className="product-price">${product.price}</div>
+                  <div className="product-price">₹{product.price}</div>
                   <button className="btn btn-primary">Purchase</button>
                 </div>
               </div>
